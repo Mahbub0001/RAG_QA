@@ -39,18 +39,21 @@ async def ingest(file: UploadFile = File(...), collection:str|None =Form(None)):
         temp_file.write(await file.read())
 
     try:
-        ingest_pdf(temp_file_path, collection)
+        result = ingest_pdf(temp_file_path, collection)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         os.remove(temp_file_path)
 
-    return {"message": "PDF ingested successfully."}
+    return {
+        "message": "PDF ingested successfully.",
+        **result,
+    }
 
 @app.post("/ask")
 def ask(req: AskRequest):
     try:
-        return ask_rag(collection= req.collection or "pdf_doc",
+        return ask_rag(collection=req.collection or "pdf_docs",
                        question=req.question,
                        k=req.k or 4)
     except Exception as e:

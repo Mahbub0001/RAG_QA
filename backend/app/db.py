@@ -14,7 +14,7 @@ def _load(collection:str) -> FAISS|None:
     if path.exists():
         return FAISS.load_local(
             str(path),
-            embedding=get_embedding(),
+            get_embedding(),
             allow_dangerous_deserialization=True
         )
     return None
